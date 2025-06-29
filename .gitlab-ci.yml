@@ -1,0 +1,99 @@
+# GitLab CI/CD pipeline for an Android/Kotlin project
+# ---------------------------------------------------
+# Stages:
+#   1. lint          – статический анализ и формат
+#   2. build         – сборка APK/библиотек
+#   3. test          – unit‑ и instrumented‑тесты + отчёты покрытия
+#   4. qa            – доп. статический анализ (Detekt) / любые QA‑инструменты
+
+image: registry.gitlab.com/android-ci/android-sdk:34
+
+stages:
+  - lint
+  - build
+  - test
+  - qa
+
+variables:
+  # Кладём кеш Gradle рядом с проектом
+  GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
+  ANDROID_COMPILE_SDK: "34"
+  ANDROID_BUILD_TOOLS: "34.0.0"
+
+# Кешируем gradle‑wrapper и зависимости между job‑ами
+cache:
+  key: gradle-cache
+  paths:
+    - .gradle/wrapper
+    - .gradle/caches
+
+before_script:
+  - chmod +x ./gradlew
+
+# ---------------------- 1. LINT ------------------------------------
+lint:
+  stage: lint
+  script:
+    - ./gradlew lintDebug ktlintCheck                       # Android Lint + Ktlint
+  artifacts:
+    when: always
+    paths:
+      - app/build/reports/lint-results-debug.html
+      - app/build/reports/ktlint/
+    reports:
+      codequality: app/build/reports/lint-results-debug.xml # покажет «Code Quality» виджет
+  allow_failure: true      # не валим билд из‑за стиля
+
+# ---------------------- 2. BUILD -----------------------------------
+build-apk:
+  stage: build
+  script:
+    - ./gradlew assembleDebug
+  artifacts:
+    paths:
+      - app/build/outputs/apk/debug/app-debug.apk
+    expire_in: 1 week
+
+# ---------------------- 3a. UNIT TESTS -----------------------------
+unit-tests:
+  stage: test
+  script:
+    - ./gradlew testDebugUnitTest jacocoTestReport
+  coverage: '/TOTAL.*?([0-9]{1,3})%/'     # вытаскиваем % из отчёта Jacoco
+  artifacts:
+    when: always
+    reports:
+      junit: app/build/test-results/testDebugUnitTest/*.xml
+      cobertura: app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml
+    paths:
+      - app/build/reports/tests/testDebugUnitTest/
+
+# ---------------------- 3b. INSTRUMENTED TESTS ----------------------
+instrumented-tests:
+  stage: test
+  image: budtmo/docker-android-x86-11.0          # контейнер с эмулятором
+  services:
+    - name: budtmo/docker-android-x86-11.0
+  script:
+    - adb wait-for-device
+    - ./gradlew connectedDebugAndroidTest
+  artifacts:
+    when: always
+    reports:
+      junit: app/build/outputs/androidTest-results/connected/*.xml
+    paths:
+      - app/build/reports/androidTests/connected/
+  timeout: 30m
+
+# ---------------------- 4. EXTRA QA (DETEKT) ------------------------
+detekt:
+  stage: qa
+  script:
+    - ./gradlew detekt
+  artifacts:
+    when: always
+    paths:
+      - build/reports/detekt/
+    reports:
+      codequality: build/reports/detekt/detekt.xml
+  allow_failure: true
