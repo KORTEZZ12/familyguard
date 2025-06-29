@@ -1,6 +1,10 @@
 plugins {
     alias(libs.plugins.android.application)
+    id("com.android.application") version "8.4.0" apply false
+    id("org.jetbrains.kotlin.android") version "1.9.24" apply false
+    id("jacoco")
 }
+
 
 android {
     namespace = "com.example.testjava"
@@ -28,6 +32,14 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+    }
+}
+
+tasks.register<JacocoReport>("jacocoTestReport") {
+    dependsOn("testDebugUnitTest")
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
     }
 }
 
