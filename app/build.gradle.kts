@@ -1,6 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
-    id("org.jetbrains.kotlin.android") version "1.9.24" apply false
+    id("org.jetbrains.kotlin.android") version "2.0.21" apply false
     id("jacoco")
 }
 
@@ -53,5 +53,7 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
     //noinspection GradleDependency
     implementation(libs.work.runtime)
-    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation(libs.okhttp)
+    androidTestImplementation(libs.rules)
+    androidTestImplementation(libs.espresso.core.v361)
 }
