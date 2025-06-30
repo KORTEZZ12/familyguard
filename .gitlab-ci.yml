@@ -26,7 +26,7 @@ before_script:
   - mv /tmp/cmdline-tools "$ANDROID_HOME/cmdline-tools/latest"
   - rm -rf sdk.zip /tmp/cmdline-tools
   - export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
-  - yes | sdkmanager --sdk_root="$ANDROID_HOME" --licenses >/dev/null
+  - yes | sdkmanager --sdk_root="$ANDROID_HOME" --licenses
   - sdkmanager --sdk_root="$ANDROID_HOME" "platform-tools" "platforms;android-${ANDROID_COMPILE_SDK}" "build-tools;${ANDROID_BUILD_TOOLS}"
   - echo "sdk.dir=$ANDROID_HOME" > local.properties
   - export ANDROID_HOME="$PWD/android-sdk-root"
