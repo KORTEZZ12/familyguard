@@ -92,7 +92,11 @@ integrationTest:
   artifacts:
     when: always
     paths:
-      junit: app/build/test-results/**/*.xml
+      # любые html/xml-файлы в подкаталогах androidTests
+      - app/build/reports/androidTests/**/*.html
+      - app/build/reports/androidTests/**/*.xml
+      # а ещё захватим JUnit XML из стандартного места
+      - app/build/test-results/**/*.xml
 
 # 6. Дополнительный QA (Detekt)
 detekt:
