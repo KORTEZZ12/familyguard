@@ -17,8 +17,9 @@ variables:
   ANDROID_HOME: "$CI_PROJECT_DIR/android-sdk-root"
 
 before_script:
-  - apt-get update -yq && apt-get install -yq wget unzip
-   - export ANDROID_HOME="$CI_PROJECT_DIR/android-sdk-root"
+  - apt-get update -yq
+  - apt-get install -yq wget unzip
+  - export ANDROID_HOME="$CI_PROJECT_DIR/android-sdk-root"
   - mkdir -p "$ANDROID_HOME/cmdline-tools"
   - wget -qO sdk.zip "https://dl.google.com/android/repository/commandlinetools-linux-${ANDROID_SDK_TOOLS}_latest.zip"
   - unzip -qq sdk.zip -d /tmp
