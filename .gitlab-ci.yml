@@ -47,12 +47,14 @@ lint:
 
 # 3. Сборка APK
 buildDebug:
+  image: gradle:8.11.1-jdk17     # официальный образ с Gradle и JDK 17
   stage: build
   script:
-    - ./gradlew assembleDebug
+    - gradle assembleDebug --no-daemon
   artifacts:
     paths:
       - app/build/outputs/
+
 
 # 4. Unit-тесты
 unitTest:
