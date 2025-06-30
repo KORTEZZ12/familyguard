@@ -11,34 +11,34 @@ variables:
   GRADLE_OPTS: "-Dorg.gradle.daemon=false"
 
 before_script:
-  # 1. Системные утилиты
+  # 1. Утилиты
   - apt-get update -yq && apt-get install -yq wget unzip
 
-  # 2. Подготовка папок SDK
+  # 2. Папка для SDK
   - export ANDROID_HOME="$PWD/android-sdk-root"
+  - export ANDROID_SDK_ROOT="$ANDROID_HOME"
   - mkdir -p "$ANDROID_HOME/cmdline-tools"
 
-  # 3. Скачиваем архив
+  # 3. Скачиваем и распаковываем
   - wget -qO sdk.zip "https://dl.google.com/android/repository/commandlinetools-linux-${ANDROID_SDK_TOOLS}_latest.zip"
-
-  # 4. Распаковываем во временную папку, чтобы достать вложенный каталог
   - unzip -qq sdk.zip -d /tmp
-
-  # 5. Перемещаем вложенный cmdline-tools в нужное место
   - mv /tmp/cmdline-tools "$ANDROID_HOME/cmdline-tools/latest"
-
-  # 6. Удаляем временный архив и папки
   - rm -rf sdk.zip /tmp/cmdline-tools
 
-  # 7. Вставляем sdkmanager в PATH
+  # 4. Включаем sdkmanager в PATH
   - export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
 
-  # 8. Принимаем лицензии и ставим платформы
-  - yes | sdkmanager --sdk_root="$ANDROID_HOME" --licenses >/dev/null
-  - sdkmanager --sdk_root="$ANDROID_HOME" "platform-tools" "platforms;android-${ANDROID_COMPILE_SDK}" "build-tools;${ANDROID_BUILD_TOOLS}"
+  # 5. Отладка (можно убрать после успешного прогона)
+  - ls -R "$ANDROID_HOME/cmdline-tools"
+  - which sdkmanager && sdkmanager --version
 
-  # 9. Делаем gradlew исполняемым
+  # 6. Принимаем лицензии и устанавливаем пакеты
+  - yes | sdkmanager --sdk_root="$ANDROID_SDK_ROOT" --licenses
+  - sdkmanager --sdk_root="$ANDROID_SDK_ROOT" "platform-tools" "platforms;android-${ANDROID_COMPILE_SDK}" "build-tools;${ANDROID_BUILD_TOOLS}"
+
+  # 7. Проверяем gradlew
   - chmod +x ./gradlew
+
 
 
 
