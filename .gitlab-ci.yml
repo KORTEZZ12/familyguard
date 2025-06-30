@@ -89,16 +89,16 @@ integrationTest:
     - adb shell settings put global transition_animation_scale 0
   script:
     - ./gradlew connectedDebugAndroidTest --stacktrace || true
-    - echo "=== TREE app/build/reports ==="
-    - find app/build/reports -type f | sed 's/^/   /'
+    - echo "=== ДЕРЕВО app/build/reports/androidTests ==="
+    - find app/build/reports/androidTests -type f | sed 's/^/   /'
+    - echo "=== ДЕРЕВО app/build/outputs/androidTest-results ==="
+    - find app/build/outputs/androidTest-results -type f | sed 's/^/   /'
+    - echo "=== ДЕРЕВО app/build/test-results ==="
+    - find app/build/test-results -type f | sed 's/^/   /'
   artifacts:
     when: always
     paths:
-      # любые html/xml-файлы в подкаталогах androidTests
-      - app/build/reports/androidTests/**/*.html
-      - app/build/reports/androidTests/**/*.xml
-      # а ещё захватим JUnit XML из стандартного места
-      - app/build/test-results/**/*.xml
+      junit: app/build/outputs/androidTest-results/connectedDebugAndroidTest/*.xml
 
 # 6. Дополнительный QA (Detekt)
 detekt:
