@@ -1,8 +1,13 @@
 image: eclipse-temurin:17-jdk-jammy
 
+# 1. Объявляем все стадии, которые потом используем
 stages:
+  - lint
   - build
-  - test
+  - unit-test
+  - integration-test
+  - qa
+  - report
 
 variables:
   ANDROID_COMPILE_SDK: "33"
@@ -11,50 +16,70 @@ variables:
   GRADLE_OPTS: "-Dorg.gradle.daemon=false"
 
 before_script:
-  # 1. Утилиты
-  - apt-get update -yq && apt-get install -yq wget unzip
+# …ваша проверенная логика установки SDK…
 
-  # 2. Папка для SDK
-  - export ANDROID_HOME="$PWD/android-sdk-root"
-  - export ANDROID_SDK_ROOT="$ANDROID_HOME"
-  - mkdir -p "$ANDROID_HOME/cmdline-tools"
+# 2. Линтинг
+lint:
+  stage: lint
+  script:
+    - ./gradlew lintDebug
+  artifacts:
+    paths:
+      - app/build/reports/lint-results.html
 
-  # 3. Скачиваем и распаковываем
-  - wget -qO sdk.zip "https://dl.google.com/android/repository/commandlinetools-linux-${ANDROID_SDK_TOOLS}_latest.zip"
-  - unzip -qq sdk.zip -d /tmp
-  - mv /tmp/cmdline-tools "$ANDROID_HOME/cmdline-tools/latest"
-  - rm -rf sdk.zip /tmp/cmdline-tools
-
-  # 4. Включаем sdkmanager в PATH
-  - export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
-
-  # 5. Отладка (можно убрать после успешного прогона)
-  - ls -R "$ANDROID_HOME/cmdline-tools"
-  - which sdkmanager && sdkmanager --version
-
-  # 6. Принимаем лицензии и устанавливаем пакеты
-  - yes | sdkmanager --sdk_root="$ANDROID_SDK_ROOT" --licenses
-  - sdkmanager --sdk_root="$ANDROID_SDK_ROOT" "platform-tools" "platforms;android-${ANDROID_COMPILE_SDK}" "build-tools;${ANDROID_BUILD_TOOLS}"
-
-  # 7. Проверяем gradlew
-  - chmod +x ./gradlew
-
-
-
-
+# 3. Сборка APK
 buildDebug:
   stage: build
   script:
-    - echo "Собираем debug-APK…"
     - ./gradlew assembleDebug
   artifacts:
     paths:
       - app/build/outputs/
 
+# 4. Unit-тесты
 unitTest:
-  stage: test
-  needs:
-    - buildDebug
+  stage: unit-test
+  needs: ["buildDebug"]
   script:
-    - echo "Запускаем unit-тесты…"
     - ./gradlew testDebugUnitTest
+  artifacts:
+    paths:
+      - app/build/reports/jacoco/
+
+# 5. Интеграционные тесты
+integrationTest:
+  image: cirrusci/android-sdk:latest
+  stage: integration-test
+  before_script:
+    - yes | sdkmanager --licenses
+    - sdkmanager "system-images;android-33;google_apis;x86_64"
+    - echo no | avdmanager create avd -n test -k "system-images;android-33;google_apis;x86_64"
+    - emulator -avd test -no-window -no-audio -no-boot-anim &
+    - android-wait-for-emulator
+    - adb shell settings put global window_animation_scale 0
+    - adb shell settings put global transition_animation_scale 0
+  script:
+    - ./gradlew connectedDebugAndroidTest
+  artifacts:
+    paths:
+      - app/build/reports/androidTests/
+
+# 6. Дополнительный QA (Detekt)
+detekt:
+  image: eclipse-temurin:17-jdk-jammy
+  stage: qa
+  script:
+    - ./gradlew detekt
+  artifacts:
+    paths:
+      - app/build/reports/detekt/
+
+# 7. Отчёт по покрытию
+coverageReport:
+  stage: report
+  script:
+    - ./gradlew testDebugUnitTest jacocoTestReport
+  artifacts:
+    when: always
+    paths:
+      - app/build/reports/jacoco/
