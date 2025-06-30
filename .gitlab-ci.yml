@@ -69,7 +69,7 @@ integrationTest:
   image: cirrusci/android-sdk:33
   stage: integration-test
   before_script:
-    - yes | sdkmanager --licenses
+    - yes | sdkmanager --licenses || true
     - sdkmanager "system-images;android-33;google_apis;x86_64"
     - echo no | avdmanager create avd -n test -k "system-images;android-33;google_apis;x86_64"
     - emulator -avd test -no-window -no-audio -no-boot-anim &
