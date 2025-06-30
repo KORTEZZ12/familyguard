@@ -1,6 +1,39 @@
-create_file:
-  image: alpine 
+image: eclipse-temurin:17-jdk-jammy
+
+stages:
+  - build
+  - test
+
+variables:
+  ANDROID_COMPILE_SDK: "33"
+  ANDROID_BUILD_TOOLS: "33.0.2"
+  ANDROID_SDK_TOOLS: "9477386"
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+
+before_script:
+  - apt-get update -yq && apt-get install -yq wget unzip
+  - export ANDROID_HOME="$PWD/android-sdk-root" && mkdir -p "$ANDROID_HOME"
+  - wget -qO sdk.zip "https://dl.google.com/android/repository/commandlinetools-linux-${ANDROID_SDK_TOOLS}_latest.zip"
+  - unzip -qq sdk.zip -d "$ANDROID_HOME/cmdline-tools"
+  - mv "$ANDROID_HOME/cmdline-tools/cmdline-tools" "$ANDROID_HOME/cmdline-tools/latest"
+  - export PATH="$PATH:$ANDROID_HOME/cmdline-tools/latest/bin"
+  - yes | sdkmanager --licenses >/dev/null
+  - sdkmanager "platform-tools" "platforms;android-${ANDROID_COMPILE_SDK}" "build-tools;${ANDROID_BUILD_TOOLS}"
+  - chmod +x ./gradlew
+
+buildDebug:
+  stage: build
   script:
-    - echo "Building ..."
-    - mkdir build
-    - touch build/somefile.txt
+    - echo "Собираем debug-APK…"
+    - ./gradlew assembleDebug
+  artifacts:
+    paths:
+      - app/build/outputs/
+
+unitTest:
+  stage: test
+  needs:
+    - buildDebug
+  script:
+    - echo "Запускаем unit-тесты…"
+    - ./gradlew testDebugUnitTest
