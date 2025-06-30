@@ -60,7 +60,7 @@ dependencies {
     //noinspection GradleDependency
 // Чтобы запускать Android-тесты на эмуляторе
     androidTestImplementation(libs.runner)
-    androidTestImplementation(libs.rules.v141)
+    androidTestImplementation("androidx.test:rules:1.6.1")
 
 // Библиотеки для самих тестов
     androidTestImplementation(libs.ext.junit)
