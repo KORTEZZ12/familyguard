@@ -10,8 +10,15 @@ pluginManagement {
         mavenCentral()
         gradlePluginPortal()
     }
+    plugins {
+        // Здесь объявляем версии плагинов один раз
+        id("com.android.application") version "8.1.1"
+        id("org.jetbrains.kotlin.android") version "1.9.24"
+        id("jacoco") version "0.8.10"
+    }
 }
-dependencyResolutionManagement {
+
+    dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
