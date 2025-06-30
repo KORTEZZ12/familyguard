@@ -65,4 +65,6 @@ dependencies {
 // Библиотеки для самих тестов
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core.v361)
+    implementation(libs.okhttp)
+
 }
