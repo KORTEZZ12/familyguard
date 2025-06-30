@@ -14,10 +14,12 @@ variables:
   ANDROID_BUILD_TOOLS: "33.0.2"
   ANDROID_SDK_TOOLS: "9477386"
   GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+  ANDROID_HOME: "$CI_PROJECT_DIR/android-sdk-root"
 
 before_script:
-  - export ANDROID_HOME="$PWD/android-sdk-root"
   - echo "sdk.dir=$ANDROID_HOME" > local.properties
+  - export ANDROID_HOME="$PWD/android-sdk-root"
+  - echo "ANDROID_HOME is $ANDROID_HOME"
   - chmod +x ./gradlew
 
 
