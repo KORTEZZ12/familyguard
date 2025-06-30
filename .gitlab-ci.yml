@@ -70,12 +70,13 @@ integrationTest:
   stage: integration-test
   before_script:
     - yes | sdkmanager --licenses || true
-    - sdkmanager "system-images;android-33;google_apis;arm64-v8a"
+    - sdkmanager "platform-tools" "emulator"
+    - sdkmanager "system-images;android-33;google_apis;x86_64"
     - |
       echo no | avdmanager create avd \
         -n test \
-        -k "system-images;android-33;google_apis;arm64-v8a"
-    - emulator -avd test \
+        -k "system-images;android-33;google_apis;x86_64"
+    - emulator 
       -no-window \
       -no-audio \
       -no-boot-anim \
