@@ -2,6 +2,7 @@ package com.example.testjava;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.rule.ActivityTestRule;
+import androidx.test.runner.AndroidJUnitRunner;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -18,7 +19,7 @@ public class DummyInstrumentedTest {
 
     @Test
     public void dummyTest() {
-        MainActivity activity = activityRule.getActivity();
-        assertNotNull("Activity должна быть запущена", activity);
+        MainActivity a = activityRule.getActivity();
+        assertNotNull("Activity должна быть запущена", a);
     }
 }

@@ -71,24 +71,15 @@ integrationTest:
   before_script:
     - yes | sdkmanager --licenses || true
     - sdkmanager "platform-tools" "emulator"
-    - sdkmanager "system-images;android-33;google_apis;x86_64"
-    - |
-      echo no | avdmanager create avd \
-        -n test \
-        -k "system-images;android-33;google_apis;x86_64"
-    - emulator 
-      -no-window \
-      -no-audio \
-      -no-boot-anim \
-      -no-accel \
-      -no-metrics &
+    - sdkmanager "system-images;android-33;google_apis;armeabi-v7a"
+    - echo no | avdmanager create avd -n test -k "system-images;android-33;google_apis;armeabi-v7a"
+    - emulator -avd test -no-window -no-audio -no-boot-anim -no-accel -no-metrics &
     - android-wait-for-emulator
     - adb shell settings put global window_animation_scale 0
     - adb shell settings put global transition_animation_scale 0
   script:
-    - ./gradlew connectedDebugAndroidTest || true
-    - echo "=== Дерево app/build/reports ==="
-    - find app/build/reports -maxdepth 3 | sed 's/^/   /'
+    - ./gradlew connectedDebugAndroidTest --stacktrace
+    - find app/build/reports/androidTests -type f | sed 's/^/   /'
   artifacts:
     when: always
     paths:

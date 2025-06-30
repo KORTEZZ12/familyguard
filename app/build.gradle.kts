@@ -32,6 +32,12 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
 }
 
 tasks.register<JacocoReport>("jacocoTestReport") {
@@ -52,8 +58,11 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     //noinspection GradleDependency
-    implementation(libs.work.runtime)
-    implementation(libs.okhttp)
-    androidTestImplementation(libs.rules)
+// Чтобы запускать Android-тесты на эмуляторе
+    androidTestImplementation(libs.runner)
+    androidTestImplementation(libs.rules.v141)
+
+// Библиотеки для самих тестов
+    androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core.v361)
 }

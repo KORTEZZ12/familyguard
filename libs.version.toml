@@ -6,8 +6,8 @@ spotbugs               = { id = "com.github.spotbugs", version = "5.0.13" }
 jacoco                 = { id = "jacoco", version = "0.8.10" }
 dependency-check       = { id = "org.owasp.dependencycheck", version = "7.5.0" }
 [libraries]
-rules = { module = "androidx.test:rules", version = "1.6.1" }
-espresso-core-v361 = { module = "androidx.test.espresso:espresso­-core", version = "3.6.1" }
-work-runtime = { module = "androidx.work:work-runtime", version = "2.10.2" }
-okhttp = { module = "com.squareup.okhttp3:okhttp", version = "4.12.0" }
+robolectric = { module = "org.robolectric:robolectric", version = "4.10.3" }
+androidx-test-core = { module = "androidx.test:core", version = "1.6.1" }
+androidx-test-ext-junit = { module = "androidx.test.ext:junit", version = "1.2.1" }
+espresso-core = { module = "androidx.test.espresso:espresso-core", version = "3.6.1" }
 
