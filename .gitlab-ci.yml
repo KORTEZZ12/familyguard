@@ -88,7 +88,8 @@ integrationTest:
   artifacts:
     when: always
     paths:
-      - app/build/reports/androidTests/
+            - app/build/reports/androidTests/**/*.html
+            - app/build/reports/androidTests/**/*.xml
 
 # 6. Дополнительный QA (Detekt)
 detekt:
