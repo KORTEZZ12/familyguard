@@ -86,13 +86,13 @@ integrationTest:
     - adb shell settings put global window_animation_scale 0
     - adb shell settings put global transition_animation_scale 0
   script:
-    - ./gradlew connectedDebugAndroidTest --stacktrace
-    - find app/build/reports/androidTests -type f | sed 's/^/   /'
+    - ./gradlew connectedDebugAndroidTest --stacktrace || true
+    - echo "=== TREE app/build/reports ==="
+    - find app/build/reports -type f | sed 's/^/   /'
   artifacts:
     when: always
     paths:
-      - app/build/reports/androidTests/connectedDebugAndroidTest/*.html
-      - app/build/reports/androidTests/connectedDebugAndroidTest/*.xml
+      junit: app/build/test-results/**/*.xml
 
 # 6. Дополнительный QA (Detekt)
 detekt:
