@@ -18,7 +18,8 @@ rules = "1.6.1"
 rulesVersion = "1.4.1"
 runner = "1.6.2"
 workRuntime = "2.10.1"
-monitor = "1.7.2"
+firebaseFirestore = "25.1.4"
+testng = "6.9.6"
 
 [libraries]
 core = { module = "androidx.test:core", version.ref = "core" }
@@ -39,7 +40,8 @@ rules = { module = "androidx.test:rules", version.ref = "rules" }
 rules-v141 = { module = "androidx.test:rules", version.ref = "rulesVersion" }
 runner = { module = "androidx.test:runner", version.ref = "runner" }
 work-runtime = { module = "androidx.work:work-runtime", version.ref = "workRuntime" }
-monitor = { group = "androidx.test", name = "monitor", version.ref = "monitor" }
+firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
+testng = { group = "org.testng", name = "testng", version.ref = "testng" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

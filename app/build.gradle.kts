@@ -51,23 +51,26 @@ tasks.register<JacocoReport>("jacocoTestReport") {
 }
 
 dependencies {
+    implementation(libs.firebase.firestore)
+    implementation(libs.testng)
+
 
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
-    implementation(libs.monitor)
-    testImplementation(libs.junit)
+
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     //noinspection GradleDependency
 // Чтобы запускать Android-тесты на эмуляторе
     androidTestImplementation(libs.runner)
-    androidTestImplementation("androidx.test:rules:1.6.1")
+
 
 // Библиотеки для самих тестов
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core.v361)
     implementation(libs.okhttp)
+
 
 }

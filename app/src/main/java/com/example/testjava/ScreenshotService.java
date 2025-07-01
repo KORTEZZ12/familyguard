@@ -13,7 +13,6 @@ import android.media.ImageReader;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
@@ -38,7 +37,6 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import androidx.core.app.NotificationCompat;
-import androidx.test.platform.app.InstrumentationRegistry;
 
 import java.nio.ByteBuffer;
 
@@ -80,13 +78,6 @@ public class ScreenshotService extends Service {
     }
 
     @Override public int onStartCommand(Intent i, int f, int id) {
-
-        Bundle args = InstrumentationRegistry.getArguments();
-        boolean isTest = args != null && "true".equals(args.getString("IS_TEST"));
-        if (isTest) {
-            stopSelf();
-            return START_NOT_STICKY;
-        }
 
         /* 1. Получаем токен, который дала система */
         int    res  = i.getIntExtra("resultCode", 0);

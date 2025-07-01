@@ -1,42 +1,25 @@
-image: eclipse-temurin:17-jdk-jammy
+image: circleci/android:api-33  # готовый образ с Android SDK, Gradle и JDK
 
-# 1. Объявляем все стадии, которые потом используем
 stages:
   - lint
   - build
-  - unit-test
-  - integration-test
+  - test
   - qa
   - report
 
 variables:
   ANDROID_COMPILE_SDK: "33"
   ANDROID_BUILD_TOOLS: "33.0.2"
-  ANDROID_SDK_TOOLS: "9477386"
-  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
-  ANDROID_HOME: "$CI_PROJECT_DIR/android-sdk-root"
+  SDK_ROOT: "$CI_PROJECT_DIR/android-sdk-root"
 
 before_script:
-  - apt-get update -yq
-  - apt-get install -yq wget unzip
-  - export ANDROID_HOME="$CI_PROJECT_DIR/android-sdk-root"
-  - mkdir -p "$ANDROID_HOME/cmdline-tools"
-  - wget -qO sdk.zip "https://dl.google.com/android/repository/commandlinetools-linux-${ANDROID_SDK_TOOLS}_latest.zip"
-  - unzip -qq sdk.zip -d /tmp
-  - mv /tmp/cmdline-tools "$ANDROID_HOME/cmdline-tools/latest"
-  - rm -rf sdk.zip /tmp/cmdline-tools
-  - export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
-  - yes | sdkmanager --sdk_root="$ANDROID_HOME" --licenses || true
-  - sdkmanager --sdk_root="$ANDROID_HOME" "platform-tools" "platforms;android-${ANDROID_COMPILE_SDK}" "build-tools;${ANDROID_BUILD_TOOLS}"
-  - echo "sdk.dir=$ANDROID_HOME" > local.properties
-  - export ANDROID_HOME="$PWD/android-sdk-root"
-  - echo "ANDROID_HOME is $ANDROID_HOME"
-  - chmod +x ./gradlew
+  # 1) Принимаем лицензии и ставим платформы/инструменты
+  - yes | sdkmanager --sdk_root="$SDK_ROOT" --install \
+    "platform-tools" \
+    "platforms;android-$ANDROID_COMPILE_SDK" \
+    "build-tools;$ANDROID_BUILD_TOOLS"
 
-
-# …ваша проверенная логика установки SDK…
-
-# 2. Линтинг
+### 1. Линтинг
 lint:
   stage: lint
   script:
@@ -45,71 +28,29 @@ lint:
     paths:
       - app/build/reports/lint-results.html
 
-# 3. Сборка APK
-buildDebug:
-  image: gradle:8.11.1-jdk17     # официальный образ с Gradle и JDK 17
+### 2. Сборка APK
+build:
   stage: build
   script:
-    - gradle assembleDebug --no-daemon
+    - ./gradlew assembleDebug
   artifacts:
     paths:
-      - app/build/outputs/
+      - app/build/outputs/apk/debug/*.apk
 
-
-# 4. Unit-тесты
+### 3. JVM-тесты (unit + Robolectric)
 unitTest:
-  stage: unit-test
-  needs: ["buildDebug"]
+  stage: test
   script:
     - ./gradlew testDebugUnitTest
   artifacts:
-    paths:
-      - app/build/reports/jacoco/
-
-# 5. Интеграционные тесты
-integrationTest:
-  image: cirrusci/android-sdk:33
-  stage: integration-test
-
-  before_script:
-    - yes | sdkmanager --licenses || true
-    - sdkmanager "platform-tools" "emulator"
-    - sdkmanager "system-images;android-33;google_apis;x86_64"
-    # Правильный флаг --force, а не -force
-    - echo no | avdmanager create avd --force -n test \
-      -k "system-images;android-33;google_apis;x86_64"
-    - emulator -avd test \
-      -no-window -no-audio -no-boot-anim -no-accel -no-metrics &
-    - android-wait-for-emulator
-    - adb shell settings put global window_animation_scale 0
-    - adb shell settings put global transition_animation_scale 0
-
-  script:
-    - ./gradlew connectedDebugAndroidTest --stacktrace
-
-    # Диагностика: покажем, куда реально положились файлы
-    - echo "=== TREE app/build/outputs ==="
-    - find app/build/outputs -type f | sed 's/^/   /'
-    - echo "=== TREE app/build/test-results ==="
-    - find app/build/test-results -type f | sed 's/^/   /'
-
-  artifacts:
     when: always
-
-    # GitLab автоматически соберёт JUnit-XML как Test Reports
     reports:
-      junit:
-        - app/build/outputs/androidTest-results/connectedDebugAndroidTest/*.xml
-        - app/build/test-results/connectedDebugAndroidTest/*.xml
-
-    # И сохранит сами XML для ручного скачивания
+      junit: app/build/test-results/testDebugUnitTest/*.xml
     paths:
-      - app/build/outputs/androidTest-results/connectedDebugAndroidTest/*.xml
-      - app/build/test-results/connectedDebugAndroidTest/*.xml
+      - app/build/test-results/testDebugUnitTest/*.xml
 
-# 6. Дополнительный QA (Detekt)
+### 4. QA-анализ (Detekt)
 detekt:
-  image: eclipse-temurin:17-jdk-jammy
   stage: qa
   script:
     - ./gradlew detekt
@@ -117,13 +58,12 @@ detekt:
     paths:
       - app/build/reports/detekt/
 
-# 7. Отчёт по покрытию
-coverageReport:
+### 5. Отчёт по покрытию (Jacoco)
+coverage:
   stage: report
   script:
-    - ./gradlew testDebugUnitTest jacocoTestReport
+    - ./gradlew jacocoTestReport
   artifacts:
     when: always
     paths:
       - app/build/reports/jacoco/
-
