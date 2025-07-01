@@ -93,11 +93,12 @@ integrationTest:
     - find app/build/reports/androidTests -type f | sed 's/^/   /'
     - echo "=== ДЕРЕВО app/build/outputs/androidTest-results ==="
     - find app/build/outputs/androidTest-results -type f | sed 's/^/   /'
+    - find app/build/outputs/androidTest-results/connectedDebugAndroidTest -type f | sed 's/^/   /'
     - echo "=== ДЕРЕВО app/build/test-results ==="
     - find app/build/test-results -type f | sed 's/^/   /'
   artifacts:
     when: always
-    reports: 
+    reports:
       junit: app/build/outputs/androidTest-results/connectedDebugAndroidTest/*.xml
     paths:
       - app/build/outputs/androidTest-results/connectedDebugAndroidTest/*.xml
