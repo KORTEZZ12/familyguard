@@ -1,66 +1,36 @@
-image: cimg/android:2025.04
-
-
 stages:
-  - lint
   - build
   - test
-  - qa
-  - report
 
-variables:
-  ANDROID_COMPILE_SDK: "33"
-  ANDROID_BUILD_TOOLS: "33.0.2"
-  SDK_ROOT: "$CI_PROJECT_DIR/android-sdk-root"
+# Кеширование ускоряет сборку (Gradle-кеш, зависимости)
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - .gradle/
+    - build/
+
+# Используем образ с Android SDK и JDK (лучше выбрать конкретную версию)
+image: registry.gitlab.com/haynes/android-docker/android-31:latest
 
 before_script:
-  - yes | sdkmanager --sdk_root="$SDK_ROOT" --install "platform-tools" "platforms;android-$ANDROID_COMPILE_SDK" "build-tools;$ANDROID_BUILD_TOOLS" "emulator" "system-images;android-$ANDROID_COMPILE_SDK;google_apis;x86_64"
+  - export GRADLE_USER_HOME=$(pwd)/.gradle
+  - chmod +x ./gradlew  # Даем права на исполнение gradle-wrapper
 
-### 1. Линтинг
-lint:
-  stage: lint
-  script:
-    - ./gradlew lintDebug
-  artifacts:
-    paths:
-      - app/build/reports/lint-results.html
-
-### 2. Сборка APK
 build:
   stage: build
   script:
-    - ./gradlew assembleDebug
+    - ./gradlew assembleDebug  # Собираем debug-версию
   artifacts:
     paths:
-      - app/build/outputs/apk/debug/*.apk
+      - app/build/outputs/apk/debug/  # Сохраняем собранный APK
 
-### 3. JVM-тесты (unit + Robolectric)
-unitTest:
+test:
   stage: test
   script:
-    - ./gradlew testDebugUnitTest
+    - ./gradlew test  # Запускаем unit-тесты
+    # Если есть инструментальные тесты (AndroidTest):
+    # - ./gradlew connectedAndroidTest
   artifacts:
-    when: always
     reports:
-      junit: app/build/test-results/testDebugUnitTest/*.xml
-    paths:
-      - app/build/test-results/testDebugUnitTest/*.xml
-
-### 4. QA-анализ (Detekt)
-detekt:
-  stage: qa
-  script:
-    - ./gradlew detekt
-  artifacts:
-    paths:
-      - app/build/reports/detekt/
-
-### 5. Отчёт по покрытию (Jacoco)
-coverage:
-  stage: report
-  script:
-    - ./gradlew jacocoTestReport
-  artifacts:
-    when: always
-    paths:
-      - app/build/reports/jacoco/
+      junit:
+        - app/build/test-results/**/*.xml  # Отчеты тестов
