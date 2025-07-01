@@ -1,7 +1,9 @@
 image: openjdk:17-jdk
 
 before_script:
-  - apt-get update -qq && apt-get install -y wget unzip
+  - apt-get update -qq
+  - apt-get install -y wget unzip
+  - wget --version
   # дальше скачивание gradle (если нужен именно openjdk, а не gradle-образ)
   - wget -O gradle.zip https://services.gradle.org/distributions/gradle-8.7-bin.zip
   - unzip gradle.zip -d /opt/gradle
