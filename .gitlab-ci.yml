@@ -19,29 +19,22 @@ stages:
 setup_sdk:
   stage: setup
   script:
-    # Утилиты для скачивания SDK
+    # Устанавливаем wget и unzip
     - apt-get update -qq && apt-get install -y -qq wget unzip
 
-    # Создаём папки под command-line tools
+    # Создаём папки и скачиваем
     - mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools/latest"
-
-    # Скачиваем и распаковываем
     - wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmdline-tools.zip
     - unzip -q cmdline-tools.zip -d "$ANDROID_SDK_ROOT/cmdline-tools/latest"
     - rm cmdline-tools.zip
 
-    # Добавляем в PATH
-    - export PATH="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/platform-tools:$PATH"
-
-    # Принимаем лицензии и ставим нужные пакеты
-    - yes | sdkmanager --sdk_root="$ANDROID_SDK_ROOT" --licenses
-    - sdkmanager --sdk_root="$ANDROID_SDK_ROOT" "platform-tools" "platforms;android-33" "build-tools;33.0.2"
-
-    # Для отладки: покажем, что лежит в папке
+    # Покажем содержимое на всякий случай
     - ls -R "$ANDROID_SDK_ROOT"
 
+    # Явно вызываем sdkmanager по полному пути
+    - yes | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$ANDROID_SDK_ROOT" --licenses
+    - "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$ANDROID_SDK_ROOT" platform-tools platforms;android-33 build-tools;33.0.2
   artifacts:
-    expire_in: 1h
     paths:
       - android-sdk/
 
