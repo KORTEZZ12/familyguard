@@ -1,31 +1,19 @@
 image: openjdk:17-jdk
 
-variables:
-  ANDROID_SDK_ROOT: "/sdk"
-  ANDROID_COMPILE_SDK: "33"
-  ANDROID_BUILD_TOOLS: "33.0.2"
-
-stages:
-  - build
-  - test
-
 before_script:
   - apt-get update -qq && apt-get install -y wget unzip
+  # дальше скачивание gradle (если нужен именно openjdk, а не gradle-образ)
   - wget -O gradle.zip https://services.gradle.org/distributions/gradle-8.7-bin.zip
   - unzip gradle.zip -d /opt/gradle
   - export PATH=$PATH:/opt/gradle/gradle-8.7/bin
-  - set -x
+  # теперь установка Android SDK как обычно:
+  - wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O cmdline-tools.zip
   - mkdir -p $ANDROID_SDK_ROOT/cmdline-tools
-  - unzip -v cmdline-tools.zip
-  - unzip cmdline-tools.zip -d $ANDROID_SDK_ROOT/cmdline-tools
-  - ls -l $ANDROID_SDK_ROOT/cmdline-tools
+  - unzip -q cmdline-tools.zip -d $ANDROID_SDK_ROOT/cmdline-tools
   - mv $ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools $ANDROID_SDK_ROOT/cmdline-tools/tools
-  - ls -l $ANDROID_SDK_ROOT/cmdline-tools/tools
   - yes | $ANDROID_SDK_ROOT/cmdline-tools/tools/bin/sdkmanager --sdk_root=$ANDROID_SDK_ROOT "platform-tools" "platforms;android-$ANDROID_COMPILE_SDK" "build-tools;$ANDROID_BUILD_TOOLS"
-  - ls -l $ANDROID_SDK_ROOT/platform-tools || true
   - export PATH=$PATH:$ANDROID_SDK_ROOT/platform-tools:$ANDROID_SDK_ROOT/build-tools/$ANDROID_BUILD_TOOLS
   - yes | $ANDROID_SDK_ROOT/cmdline-tools/tools/bin/sdkmanager --licenses
-
 
 build:
   stage: build
