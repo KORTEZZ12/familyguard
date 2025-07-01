@@ -13,9 +13,10 @@ public class SimpleActivityTest {
 
     @Test
     public void launchTestEmptyActivity_usingActivityScenario() {
+        // 1) Запускаем TestEmptyActivity
         try (ActivityScenario<TestEmptyActivity> scenario =
                      ActivityScenario.launch(TestEmptyActivity.class)) {
-            // Проверяем, что Activity создалась
+            // 2) Проверяем, что она действительно стартовала
             scenario.onActivity(activity ->
                     assertNotNull("Activity не должна быть null", activity)
             );

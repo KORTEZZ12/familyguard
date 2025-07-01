@@ -12,6 +12,7 @@ import android.app.usage.UsageStats;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -21,6 +22,7 @@ import java.util.Calendar;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -61,6 +63,15 @@ public class UsageStatsService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
+        Bundle args = InstrumentationRegistry.getArguments();
+        if (args != null && "true".equals(args.getString("IS_TEST"))) {
+            // останавливаем саму себя
+            stopSelf();
+            // не будем перезапускаться автоматически
+            return START_NOT_STICKY;
+        }
+
         // 1) Обработка команды установки лимита
         if (intent != null && ACTION_SET_LIMIT.equals(intent.getAction())) {
             String pkg   = intent.getStringExtra("pkg");
