@@ -1,40 +1,59 @@
+# Используем официальный образ с JDK 11
+image: openjdk:11
+
+# Общие переменные
+variables:
+  ANDROID_SDK_ROOT: "$CI_PROJECT_DIR/android-sdk"
+  GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
+
+# Кэшируем Gradle и SDK между сборками
+cache:
+  key: "${CI_COMMIT_REF_SLUG}"
+  paths:
+    - .gradle/
+    - android-sdk/
+
 stages:
+  - setup
   - build
   - test
 
-# Кеширование ускоряет сборку (Gradle-кеш, зависимости)
-cache:
-  key: ${CI_COMMIT_REF_SLUG}
-  paths:
-    - .gradle/
-    - build/
-
-# Используем образ с Android SDK и JDK (лучше выбрать конкретную версию)
-image: cimg/android:2025.04
-
-before_script:
-  - export GRADLE_USER_HOME=$(pwd)/.gradle
-  - chmod +x ./gradlew  # Даем права на исполнение gradle-wrapper
-
-build:
-  stage: build
-  before_script:
-    - ls -la ./gradlew  # Проверить права (должно быть -rwxr-xr-x)
-    - git update-index --chmod=+x gradlew  # Исправить права через git
-    - ./gradlew --version  # Проверить, что работает
+# Шаг подготовки SDK (выполняется один раз в каждом pipeline)
+setup_sdk:
+  stage: setup
   script:
-    - ./gradlew assembleDebug  # Собираем debug-версию
+    # Устанавливаем необходимые утилиты
+    - apt-get update -qq && apt-get install -y -qq wget unzip
+    # Скачиваем и распаковываем command line tools
+    - mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools"
+    - wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmdline-tools.zip
+    - unzip -q cmdline-tools.zip -d "$ANDROID_SDK_ROOT/cmdline-tools"
+    - rm cmdline-tools.zip
+    # Принимаем лицензии
+    - yes | "$ANDROID_SDK_ROOT/cmdline-tools/tools/bin/sdkmanager" --sdk_root="$ANDROID_SDK_ROOT" --licenses
+    # Устанавливаем платформы и билд-тулз
+    - "$ANDROID_SDK_ROOT/cmdline-tools/tools/bin/sdkmanager" --sdk_root="$ANDROID_SDK_ROOT" "platform-tools" "platforms;android-33" "build-tools;33.0.2"
   artifacts:
     paths:
-      - app/build/outputs/apk/debug/  # Сохраняем собранный APK
+      - android-sdk/
 
+# Сборка APK
+build:
+  stage: build
+  script:
+    - ./gradlew assembleDebug --no-daemon
+  artifacts:
+    paths:
+      - app/build/outputs/apk/debug/*.apk
+
+# Тесты и отчёты покрытия
 test:
   stage: test
   script:
-    - ./gradlew test  # Запускаем unit-тесты
-    # Если есть инструментальные тесты (AndroidTest):
-    # - ./gradlew connectedAndroidTest
+    # Запуск unit-тестов и генерация покрытия
+    - ./gradlew testDebugUnitTest jacocoTestReport --no-daemon
   artifacts:
     reports:
-      junit:
-        - app/build/test-results/**/*.xml  # Отчеты тестов
+      junit: app/build/test-results/testDebugUnitTest/*.xml
+    paths:
+      - app/build/reports/jacoco/
