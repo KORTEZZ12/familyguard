@@ -10,7 +10,7 @@ cache:
     - build/
 
 # Используем образ с Android SDK и JDK (лучше выбрать конкретную версию)
-image: registry.gitlab.com/haynes/android-docker/android-31:latest
+image: cimg/android:2025.04
 
 before_script:
   - export GRADLE_USER_HOME=$(pwd)/.gradle
