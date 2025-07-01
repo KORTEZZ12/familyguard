@@ -1,4 +1,4 @@
-image: registry.gitlab.com/developmentseed/docker-android-sdk:33
+image: hitalos/android:build-tools-33.0.2
 
 stages:
   - build
@@ -6,7 +6,6 @@ stages:
 
 before_script:
   - yes | sdkmanager --licenses
-  - sdkmanager "platform-tools" "build-tools;33.0.2" "platforms;android-33"
 
 build:
   stage: build
