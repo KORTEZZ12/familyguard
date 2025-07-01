@@ -70,38 +70,42 @@ unitTest:
 integrationTest:
   image: cirrusci/android-sdk:33
   stage: integration-test
+
   before_script:
     - yes | sdkmanager --licenses || true
     - sdkmanager "platform-tools" "emulator"
     - sdkmanager "system-images;android-33;google_apis;x86_64"
-    - echo no | avdmanager create avd \
-      -force \
-      -n test \
+    # Правильный флаг --force, а не -force
+    - echo no | avdmanager create avd --force -n test \
       -k "system-images;android-33;google_apis;x86_64"
     - emulator -avd test \
-      -no-window \
-      -no-audio \
-      -no-boot-anim \
-      -no-accel \
-      -no-metrics &
+      -no-window -no-audio -no-boot-anim -no-accel -no-metrics &
     - android-wait-for-emulator
     - adb shell settings put global window_animation_scale 0
     - adb shell settings put global transition_animation_scale 0
+
   script:
-    - ./gradlew connectedDebugAndroidTest --stacktrace || true
-    - echo "=== ДЕРЕВО app/build/reports/androidTests ==="
-    - find app/build/reports/androidTests -type f | sed 's/^/   /'
-    - echo "=== ДЕРЕВО app/build/outputs/androidTest-results ==="
-    - find app/build/outputs/androidTest-results -type f | sed 's/^/   /'
-    - find app/build/outputs/androidTest-results/connectedDebugAndroidTest -type f | sed 's/^/   /'
-    - echo "=== ДЕРЕВО app/build/test-results ==="
+    - ./gradlew connectedDebugAndroidTest --stacktrace
+
+    # Диагностика: покажем, куда реально положились файлы
+    - echo "=== TREE app/build/outputs ==="
+    - find app/build/outputs -type f | sed 's/^/   /'
+    - echo "=== TREE app/build/test-results ==="
     - find app/build/test-results -type f | sed 's/^/   /'
+
   artifacts:
     when: always
+
+    # GitLab автоматически соберёт JUnit-XML как Test Reports
     reports:
-      junit: app/build/outputs/androidTest-results/connectedDebugAndroidTest/*.xml
+      junit:
+        - app/build/outputs/androidTest-results/connectedDebugAndroidTest/*.xml
+        - app/build/test-results/connectedDebugAndroidTest/*.xml
+
+    # И сохранит сами XML для ручного скачивания
     paths:
       - app/build/outputs/androidTest-results/connectedDebugAndroidTest/*.xml
+      - app/build/test-results/connectedDebugAndroidTest/*.xml
 
 # 6. Дополнительный QA (Detekt)
 detekt:
