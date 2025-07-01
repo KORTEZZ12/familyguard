@@ -97,8 +97,10 @@ integrationTest:
     - find app/build/test-results -type f | sed 's/^/   /'
   artifacts:
     when: always
-    paths:
+    reports: 
       junit: app/build/outputs/androidTest-results/connectedDebugAndroidTest/*.xml
+    paths:
+      - app/build/outputs/androidTest-results/connectedDebugAndroidTest/*.xml
 
 # 6. Дополнительный QA (Detekt)
 detekt:
