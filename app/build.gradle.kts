@@ -1,76 +1,59 @@
 plugins {
-    alias(libs.plugins.android.application)
-    id("org.jetbrains.kotlin.android") version "2.0.21" apply false
-    id("jacoco")
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+    id("io.gitlab.arturbosch.detekt") version "1.23.0"
+    id("pmd")
 }
 
-
 android {
-    namespace = "com.example.testjava"
-    compileSdk = 35
-
+    compileSdk = 33
     defaultConfig {
-        applicationId = "com.example.testjava"
-        minSdk = 24
-        targetSdk = 35
+        applicationId = "com.example.familyguard"
+        minSdk = 21
+        targetSdk = 33
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        testInstrumentationRunnerArguments["IS_TEST"] = "true"
-        testInstrumentationRunnerArguments["timeout_msec"] = "120000"
     }
-
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
-
-    testOptions {
-        unitTests {
-            isIncludeAndroidResources = true
-        }
-    }
-}
-
-tasks.register<JacocoReport>("jacocoTestReport") {
-    dependsOn("testDebugUnitTest")
-    reports {
-        xml.required.set(true)
-        html.required.set(true)
+    kotlinOptions {
+        jvmTarget = "17"
     }
 }
 
 dependencies {
-    implementation(libs.firebase.firestore)
-    implementation(libs.testng)
+    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("com.google.android.material:material:1.9.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    testImplementation("junit:junit:4.13.2") {
+        exclude(group = "org.hamcrest", module = "hamcrest-core")
+    }
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
+    // Detekt форматирование (опционально)
+    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.0")
+}
 
-    implementation(libs.appcompat)
-    implementation(libs.material)
-    implementation(libs.activity)
-    implementation(libs.constraintlayout)
+detekt {
+    config = files("$projectDir/config/detekt.yml") // Создай этот файл позже, если нужен кастомный конфиг
+    buildUponDefaultConfig = true
+    allRules = false
+}
 
-    androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.espresso.core)
-    //noinspection GradleDependency
-// Чтобы запускать Android-тесты на эмуляторе
-    androidTestImplementation(libs.runner)
-
-
-// Библиотеки для самих тестов
-    androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.espresso.core.v361)
-    implementation(libs.okhttp)
-
-
+pmd {
+    ruleSets = listOf("basic", "braces", "clone", "codesize", "design", "empty", "finalizers", "imports", "naming", "optimizations", "strictexception", "strings", "unusedcode")
+    ruleSetFiles = files("$projectDir/config/pmd-ruleset.xml") // Создай этот файл позже, если нужен кастомный ruleset
+    sourceSets = sourceSets
+    ignoreFailures = false
 }
