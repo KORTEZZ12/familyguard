@@ -1,71 +1,26 @@
-image: openjdk:11
-
-variables:
-  ANDROID_SDK_ROOT: "$CI_PROJECT_DIR/android-sdk"
-  ANDROID_HOME:      "$CI_PROJECT_DIR/android-sdk"
-  GRADLE_USER_HOME:  "$CI_PROJECT_DIR/.gradle"
-
-# Кэшируем только Gradle
-cache:
-  key: "${CI_COMMIT_REF_SLUG}"
-  paths:
-    - .gradle/
+image: registry.gitlab.com/developmentseed/docker-android-sdk:33
 
 stages:
-  - setup
   - build
   - test
 
-setup_sdk:
-  stage: setup
-  script:
-    # Устанавливаем wget и unzip
-    - apt-get update -qq && apt-get install -y -qq wget unzip
-
-    # Создаём папки и скачиваем
-    - mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools/latest"
-    - wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmdline-tools.zip
-    - unzip -q cmdline-tools.zip -d "$ANDROID_SDK_ROOT/cmdline-tools/latest"
-    - rm cmdline-tools.zip
-
-    # Покажем содержимое на всякий случай
-    - ls -R "$ANDROID_SDK_ROOT"
-
-    # Явно вызываем sdkmanager по полному пути
-    - yes | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$ANDROID_SDK_ROOT" --licenses
-    - "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$ANDROID_SDK_ROOT" platform-tools platforms;android-33 build-tools;33.0.2
-  artifacts:
-    paths:
-      - android-sdk/
+before_script:
+  - yes | sdkmanager --licenses
+  - sdkmanager "platform-tools" "build-tools;33.0.2" "platforms;android-33"
 
 build:
   stage: build
-  dependencies:
-    - setup_sdk
-  before_script:
-    - export ANDROID_SDK_ROOT="$CI_PROJECT_DIR/android-sdk"
-    - export ANDROID_HOME="$CI_PROJECT_DIR/android-sdk"
-    - export PATH="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/platform-tools:$PATH"
   script:
-    - ./gradlew assembleDebug --no-daemon
-  artifacts:
-    expire_in: 1h
-    paths:
-      - app/build/outputs/apk/debug/*.apk
+    - ./gradlew assembleDebug
 
 test:
   stage: test
-  dependencies:
-    - setup_sdk
-  before_script:
-    - export ANDROID_SDK_ROOT="$CI_PROJECT_DIR/android-sdk"
-    - export ANDROID_HOME="$CI_PROJECT_DIR/android-sdk"
-    - export PATH="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/platform-tools:$PATH"
   script:
-    - ./gradlew testDebugUnitTest jacocoTestReport --no-daemon
+    - ./gradlew testDebugUnitTest
   artifacts:
-    expire_in: 1h
+    when: always
     reports:
-      junit: app/build/test-results/testDebugUnitTest/*.xml
+      junit: app/build/test-results/testDebugUnitTest/
     paths:
-      - app/build/reports/jacoco/
+      - app/build/reports/tests/testDebugUnitTest/
+    expire_in: 1 week
