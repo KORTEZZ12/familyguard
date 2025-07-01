@@ -14,11 +14,7 @@ variables:
   SDK_ROOT: "$CI_PROJECT_DIR/android-sdk-root"
 
 before_script:
-  # 1) Принимаем лицензии и ставим платформы/инструменты
-  - yes | sdkmanager --sdk_root="$SDK_ROOT" --install \
-    "platform-tools" \
-    "platforms;android-$ANDROID_COMPILE_SDK" \
-    "build-tools;$ANDROID_BUILD_TOOLS"
+  - yes | sdkmanager --sdk_root="$SDK_ROOT" --install "platform-tools" "platforms;android-$ANDROID_COMPILE_SDK" "build-tools;$ANDROID_BUILD_TOOLS" "emulator" "system-images;android-$ANDROID_COMPILE_SDK;google_apis;x86_64"
 
 ### 1. Линтинг
 lint:
