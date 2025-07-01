@@ -1,4 +1,5 @@
-image: circleci/android:api-33  # готовый образ с Android SDK, Gradle и JDK
+image: cimg/android:2025.04
+
 
 stages:
   - lint
