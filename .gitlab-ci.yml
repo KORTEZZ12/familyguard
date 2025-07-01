@@ -18,6 +18,10 @@ before_script:
 
 build:
   stage: build
+  before_script:
+    - ls -la ./gradlew  # Проверить права (должно быть -rwxr-xr-x)
+    - git update-index --chmod=+x gradlew  # Исправить права через git
+    - ./gradlew --version  # Проверить, что работает
   script:
     - ./gradlew assembleDebug  # Собираем debug-версию
   artifacts:
