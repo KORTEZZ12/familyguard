@@ -23,7 +23,8 @@ setup_sdk:
   stage: setup
   script:
     # Устанавливаем необходимые утилиты
-    - apt-get update -qq && apt-get install -y -qq wget unzip
+    - apt-get update -qq
+    - apt-get install -y -qq wget unzip
     # Скачиваем и распаковываем command line tools
     - mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools"
     - wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmdline-tools.zip
