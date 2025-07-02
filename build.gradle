@@ -10,6 +10,18 @@ buildscript {
         classpath("io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.23.0")
         // Не добавляем PMD в classpath, так как используем встроенный плагин
     }
+}// Top-level build file where you can add configuration options common to all sub-projects/modules.
+buildscript {
+    repositories {
+        mavenCentral()
+        google()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.1.0'
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.24'
+        classpath 'io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.23.0'
+        // Не добавляем PMD в classpath, так как используем встроенный плагин
+    }
 }
 
 allprojects {
@@ -19,6 +31,6 @@ allprojects {
     }
 }
 
-tasks.register("clean", Delete::class) {
-    delete(buildDir)
+tasks.register('clean', Delete) {
+    delete rootProject.buildDir
 }
