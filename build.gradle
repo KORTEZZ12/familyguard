@@ -1,12 +1,12 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     repositories {
+        mavenCentral() // Добавлено и приоритетоно
         google()
-        mavenCentral()
     }
     dependencies {
         classpath("com.android.tools.build:gradle:8.1.0")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.24") // Обновлено до последней стабильной версии
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.24")
         classpath("io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.23.0")
         classpath("pmd:pmd:6.55.0")
     }
@@ -14,8 +14,8 @@ buildscript {
 
 allprojects {
     repositories {
+        mavenCentral() // Добавлено и приоритетоно
         google()
-        mavenCentral()
     }
 }
 

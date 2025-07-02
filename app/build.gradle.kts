@@ -46,13 +46,13 @@ dependencies {
 }
 
 detekt {
-    config.from("$projectDir/config/detekt.yml") // Исправлено с config = files(...) на config.from(...)
+    config.from("$projectDir/config/detekt.yml")
     buildUponDefaultConfig = true
     allRules = false
 }
 
 pmd {
     ruleSets = listOf("basic", "braces", "clone", "codesize", "design", "empty", "finalizers", "imports", "naming", "optimizations", "strictexception", "strings", "unusedcode")
-    ruleSetFiles = files("$projectDir/config/pmd-ruleset.xml") // Создай этот файл позже, если нужен кастомный ruleset
+    ruleSetFiles = files("$projectDir/config/pmd-ruleset.xml")
     sourceSets = sourceSets
 }
