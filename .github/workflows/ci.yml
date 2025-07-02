@@ -28,6 +28,9 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
+      - name: Clean Gradle cache
+        run: ./gradlew clean
+
       - name: Run assembleDebug
         run: ./gradlew assembleDebug --stacktrace --info
 
@@ -58,6 +61,9 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
+      - name: Clean Gradle cache
+        run: ./gradlew clean
+
       - name: Run Detekt
         run: ./gradlew detekt --stacktrace --info
 
@@ -87,6 +93,9 @@ jobs:
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
+
+      - name: Clean Gradle cache
+        run: ./gradlew clean
 
       - name: Run PMD
         run: ./gradlew pmdMain --stacktrace --info
