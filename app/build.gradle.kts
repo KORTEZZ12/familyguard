@@ -55,5 +55,5 @@ pmd {
     ruleSets = listOf("basic", "braces", "clone", "codesize", "design", "empty", "finalizers", "imports", "naming", "optimizations", "strictexception", "strings", "unusedcode")
     ruleSetFiles = files("$projectDir/config/pmd-ruleset.xml") // Создай этот файл позже, если нужен кастомный ruleset
     sourceSets = sourceSets
-    ignoreFailures = false
+    // ignoreFailures = false // Убрано, так как не поддерживается в Kotlin DSL
 }
