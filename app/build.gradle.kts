@@ -46,7 +46,7 @@ dependencies {
 }
 
 detekt {
-    config = files("$projectDir/config/detekt.yml") // Создай этот файл позже, если нужен кастомный конфиг
+    config.from("$projectDir/config/detekt.yml") // Исправлено с config = files(...) на config.from(...)
     buildUponDefaultConfig = true
     allRules = false
 }
@@ -55,5 +55,4 @@ pmd {
     ruleSets = listOf("basic", "braces", "clone", "codesize", "design", "empty", "finalizers", "imports", "naming", "optimizations", "strictexception", "strings", "unusedcode")
     ruleSetFiles = files("$projectDir/config/pmd-ruleset.xml") // Создай этот файл позже, если нужен кастомный ruleset
     sourceSets = sourceSets
-    // ignoreFailures = false // Убрано, так как не поддерживается в Kotlin DSL
 }
