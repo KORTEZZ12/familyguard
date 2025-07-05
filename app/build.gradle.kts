@@ -61,5 +61,5 @@ tasks.register<org.gradle.api.plugins.quality.Pmd>("pmd") {
     source("src/main/java")
     include("**/*.java")
     ruleSetFiles = files("$projectDir/config/pmd-ruleset.xml")
-    isIgnoreFailures = false
+    ignoreFailures = false // <-- исправленное название свойства
 }
