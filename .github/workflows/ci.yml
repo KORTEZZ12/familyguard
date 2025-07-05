@@ -110,6 +110,10 @@ jobs:
           ./gradlew --stop
           rm -rf ~/.gradle/caches/
           ./gradlew clean
+          
+      - name: List all Gradle tasks
+        run: ./gradlew tasks --all
+      
       - name: Run PMD
         run: ./gradlew pmdDebug pmdRelease --stacktrace --info
 
