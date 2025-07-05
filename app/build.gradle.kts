@@ -36,6 +36,8 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.9.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0") // Добавлено
+    // implementation("com.squareup.okhttp3:okhttp-urlconnection:4.12.0") // Опционально, если нужен multipart
     testImplementation("junit:junit:4.13.2") {
         exclude(group = "org.hamcrest", module = "hamcrest-core")
     }
