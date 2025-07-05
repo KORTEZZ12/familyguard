@@ -6,12 +6,12 @@ plugins {
 }
 
 android {
-    namespace = "com.example.familyguard"
-    compileSdk = 34 // Обновлено с 33
+    namespace = "com.example.testjava" // Убедись, что совпадает с package в Java-коде
+    compileSdk = 34
     defaultConfig {
         applicationId = "com.example.familyguard"
         minSdk = 21
-        targetSdk = 34 // Обновлено с 33
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -33,7 +33,7 @@ android {
 
 dependencies {
     implementation("androidx.core:core:1.13.1")
-    implementation("androidx.activity:activity:1.9.0") // Обновлено с 1.8.0 для совместимости
+    implementation("androidx.activity:activity:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.9.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
