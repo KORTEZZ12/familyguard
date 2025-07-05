@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("io.gitlab.arturbosch.detekt") version "1.23.0" apply false // Добавлено apply false, чтобы плагин не применялся автоматически
+    id("io.gitlab.arturbosch.detekt") version "1.23.0" // Убрано apply: false, плагин будет применён явно
     id("pmd")
 }
 
@@ -45,8 +45,7 @@ dependencies {
     // detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.0")
 }
 
-detekt {
-    // Применяем плагин только здесь, если нужно
+detekt { // Явное применение плагина
     config.from("$projectDir/config/detekt.yml")
     buildUponDefaultConfig = true
     allRules = false

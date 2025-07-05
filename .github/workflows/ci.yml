@@ -35,7 +35,7 @@ jobs:
           ./gradlew clean
 
       - name: Run assembleDebug
-        run: ./gradlew assembleDebug --stacktrace --info
+        run: ./gradlew assembleDebug --refresh-dependencies --stacktrace --info
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -71,7 +71,7 @@ jobs:
           ./gradlew clean
 
       - name: Run Detekt
-        run: ./gradlew detekt --stacktrace --info
+        run: ./gradlew detekt --refresh-dependencies --stacktrace --info
 
       - name: Upload Detekt reports
         uses: actions/upload-artifact@v4
