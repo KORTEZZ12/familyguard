@@ -113,6 +113,7 @@ jobs:
           
       - name: List all Gradle tasks
         run: ./gradlew tasks --all
+        if: always()
       
       - name: Run PMD
         run: ./gradlew pmdDebug pmdRelease --stacktrace --info
