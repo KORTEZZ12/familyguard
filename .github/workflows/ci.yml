@@ -111,7 +111,7 @@ jobs:
           rm -rf ~/.gradle/caches/
           ./gradlew clean
       - name: Run PMD
-        run: ./gradlew pmd --stacktrace --info
+        run: ./gradlew pmdDebug pmdRelease --stacktrace --info
 
       - name: Upload PMD reports
         uses: actions/upload-artifact@v4
