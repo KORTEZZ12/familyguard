@@ -6,12 +6,12 @@ plugins {
 }
 
 android {
-    namespace = "com.example.familyguard" // Добавлено
-    compileSdk = 33
+    namespace = "com.example.familyguard"
+    compileSdk = 34 // Обновлено с 33
     defaultConfig {
         applicationId = "com.example.familyguard"
         minSdk = 21
-        targetSdk = 33
+        targetSdk = 34 // Обновлено с 33
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
