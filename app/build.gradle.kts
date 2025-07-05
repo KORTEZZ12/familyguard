@@ -55,3 +55,11 @@ pmd {
     ruleSetFiles = files("$projectDir/config/pmd-ruleset.xml")
     sourceSets = sourceSets
 }
+tasks.register<org.gradle.api.plugins.quality.Pmd>("pmd") {
+    group = "verification"
+    description = "Run PMD analysis"
+    source("src/main/java")
+    include("**/*.java")
+    ruleSetFiles = files("$projectDir/config/pmd-ruleset.xml")
+    isIgnoreFailures = false
+}
