@@ -33,12 +33,10 @@ jobs:
           ./gradlew --stop
           rm -rf ~/.gradle/caches/
           ./gradlew clean
-
       - name: Verify resource files
         run: |
           ls -la app/src/main/res/layout/
           ls -la app/src/main/res/drawable/
-
       - name: Run assembleDebug
         run: ./gradlew assembleDebug --refresh-dependencies --stacktrace --info
 
@@ -77,7 +75,6 @@ jobs:
           ./gradlew --stop
           rm -rf ~/.gradle/caches/
           ./gradlew clean
-
       - name: Run Detekt
         run: ./gradlew detekt --refresh-dependencies --stacktrace --info
 
@@ -113,7 +110,6 @@ jobs:
           ./gradlew --stop
           rm -rf ~/.gradle/caches/
           ./gradlew clean
-
       - name: Run PMD
         run: ./gradlew pmdMain --stacktrace --info
 
