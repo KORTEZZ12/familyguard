@@ -116,7 +116,7 @@ jobs:
         if: always()
       
       - name: Run PMD
-        run: ./gradlew pmdDebug pmdRelease --stacktrace --info
+        run: ./gradlew :app:pmd --stacktrace --info
 
       - name: Upload PMD reports
         uses: actions/upload-artifact@v4
