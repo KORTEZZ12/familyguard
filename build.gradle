@@ -6,7 +6,7 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:8.2.0'
         classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.24'
-        classpath 'net.sourceforge.pmd:pmd-gradle-plugin:6.55.0' // Добавь PMD
+        classpath 'com.github.spotbugs.snom:gradle-pmd-plugin:2.0.0' // Используй актуальную версию
     }
 }
 
