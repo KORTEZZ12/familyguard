@@ -1,11 +1,12 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("io.gitlab.arturbosch.detekt") version "1.23.0" // Убрано apply: false, плагин будет применён явно
+    id("io.gitlab.arturbosch.detekt") version "1.23.0"
     id("pmd")
 }
 
 android {
+    namespace = "com.example.familyguard" // Добавлено
     compileSdk = 33
     defaultConfig {
         applicationId = "com.example.familyguard"
@@ -40,12 +41,9 @@ dependencies {
     }
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-
-    // Убрано detektPlugins, так как версия уже задана в plugins
-    // detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.0")
 }
 
-detekt { // Явное применение плагина
+detekt {
     config.from("$projectDir/config/detekt.yml")
     buildUponDefaultConfig = true
     allRules = false
