@@ -51,7 +51,8 @@ detekt {
 }
 
 pmd {
+    toolVersion.set("6.55.0") // Укажи версию
     ruleSets = listOf("basic", "braces", "clone", "codesize", "design", "empty", "finalizers", "imports", "naming", "optimizations", "strictexception", "strings", "unusedcode")
     ruleSetFiles = files("$projectDir/config/pmd-ruleset.xml")
-    sourceSets = sourceSets
+    sourceSets = listOf(sourceSets.getByName("main")) // Укажи конкретный sourceSet
 }
