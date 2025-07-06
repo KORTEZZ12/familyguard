@@ -3,6 +3,8 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("io.gitlab.arturbosch.detekt") version "1.23.0"
     id("pmd")
+    // Add SpotBugs plugin
+    id("com.github.spotbugs") version "6.0.26"
 }
 
 android {
@@ -44,6 +46,7 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 }
+
 detekt {
     config.from("$projectDir/config/detekt.yml")
     buildUponDefaultConfig = true
@@ -55,11 +58,32 @@ pmd {
     ruleSetFiles = files("$projectDir/config/pmd-ruleset.xml")
     sourceSets = sourceSets
 }
+
 tasks.register<org.gradle.api.plugins.quality.Pmd>("pmd") {
     group = "verification"
     description = "Run PMD analysis"
     source("src/main/java")
     include("**/*.java")
     ruleSetFiles = files("$projectDir/config/pmd-ruleset.xml")
-    ignoreFailures = false // <-- исправленное название свойства
+    ignoreFailures = false
+}
+
+// SpotBugs configuration
+spotbugs {
+    effort.set("max") // Maximum analysis effort
+    reportLevel.set("high") // Report high-confidence issues
+    excludeFilter.set(file("$projectDir/spotbugs-exclude.xml")) // Optional: create an exclude filter if needed
+}
+
+tasks.withType<com.github.spotbugs.snom.SpotBugsTask>().configureEach {
+    reports {
+        xml {
+            enabled = true
+            destination = file("$buildDir/reports/spotbugs/spotbugs.xml")
+        }
+        html {
+            enabled = true
+            destination = file("$buildDir/reports/spotbugs/spotbugs.html")
+        }
+    }
 }
