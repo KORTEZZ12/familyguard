@@ -76,14 +76,14 @@ spotbugs {
 }
 
 tasks.withType<com.github.spotbugs.snom.SpotBugsTask>().configureEach {
-    reports.configure {
+    reports {
         xml {
-            enabled.set(true)
-            outputLocation.set(file("$buildDir/reports/spotbugs/spotbugs.xml"))
+            required.set(true)
+            destination.set(file("$buildDir/reports/spotbugs/spotbugs.xml"))
         }
         html {
-            enabled.set(true)
-            outputLocation.set(file("$buildDir/reports/spotbugs/spotbugs.html"))
+            required.set(true)
+            destination.set(file("$buildDir/reports/spotbugs/spotbugs.html"))
         }
     }
 }
