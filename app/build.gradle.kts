@@ -3,7 +3,6 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("io.gitlab.arturbosch.detekt") version "1.23.0"
     id("pmd")
-    // SpotBugs plugin
     id("com.github.spotbugs") version "6.0.26"
 }
 
@@ -77,13 +76,9 @@ spotbugs {
 
 tasks.withType<com.github.spotbugs.snom.SpotBugsTask>().configureEach {
     reports {
-        xml {
-            required.set(true)
-            destination.set(file("$buildDir/reports/spotbugs/spotbugs.xml"))
-        }
-        html {
-            required.set(true)
-            destination.set(file("$buildDir/reports/spotbugs/spotbugs.html"))
-        }
+        xml.enabled = true
+        xml.outputLocation = file("$buildDir/reports/spotbugs/spotbugs.xml")
+        html.enabled = true
+        html.outputLocation = file("$buildDir/reports/spotbugs/spotbugs.html")
     }
 }
