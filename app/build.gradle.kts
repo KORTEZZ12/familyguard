@@ -3,12 +3,12 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("io.gitlab.arturbosch.detekt") version "1.23.0"
     id("pmd")
-    // Add SpotBugs plugin
+    // SpotBugs plugin
     id("com.github.spotbugs") version "6.0.26"
 }
 
 android {
-    namespace = "com.example.testjava" // Убедись, что совпадает с package в Java-коде
+    namespace = "com.example.testjava"
     compileSdk = 34
     defaultConfig {
         applicationId = "com.example.familyguard"
@@ -70,20 +70,20 @@ tasks.register<org.gradle.api.plugins.quality.Pmd>("pmd") {
 
 // SpotBugs configuration
 spotbugs {
-    effort.set("max") // Maximum analysis effort
-    reportLevel.set("high") // Report high-confidence issues
-    excludeFilter.set(file("$projectDir/spotbugs-exclude.xml")) // Optional: create an exclude filter if needed
+    effort.set(com.github.spotbugs.snom.Effort.MAX)
+    reportLevel.set(com.github.spotbugs.snom.Confidence.HIGH)
+    excludeFilter.set(file("$projectDir/spotbugs-exclude.xml")) // Optional: create if needed
 }
 
 tasks.withType<com.github.spotbugs.snom.SpotBugsTask>().configureEach {
-    reports {
+    reports.configure {
         xml {
-            enabled = true
-            destination = file("$buildDir/reports/spotbugs/spotbugs.xml")
+            enabled.set(true)
+            outputLocation.set(file("$buildDir/reports/spotbugs/spotbugs.xml"))
         }
         html {
-            enabled = true
-            destination = file("$buildDir/reports/spotbugs/spotbugs.html")
+            enabled.set(true)
+            outputLocation.set(file("$buildDir/reports/spotbugs/spotbugs.html"))
         }
     }
 }
