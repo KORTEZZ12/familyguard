@@ -67,18 +67,21 @@ tasks.register<org.gradle.api.plugins.quality.Pmd>("pmd") {
     ignoreFailures = false
 }
 
-// SpotBugs configuration
 spotbugs {
     effort.set(com.github.spotbugs.snom.Effort.MAX)
     reportLevel.set(com.github.spotbugs.snom.Confidence.HIGH)
-    excludeFilter.set(file("$projectDir/spotbugs-exclude.xml")) // Optional: create if needed
+    excludeFilter.set(file("$projectDir/spotbugs-exclude.xml"))
 }
 
 tasks.withType<com.github.spotbugs.snom.SpotBugsTask>().configureEach {
     reports {
-        xml.enabled = true
-        xml.outputLocation = file("$buildDir/reports/spotbugs/spotbugs.xml")
-        html.enabled = true
-        html.outputLocation = file("$buildDir/reports/spotbugs/spotbugs.html")
+        xml {
+            required.set(true)
+            outputLocation.set(file("${layout.buildDirectory.get().asFile}/reports/spotbugs/spotbugs.xml"))
+        }
+        html {
+            required.set(true)
+            outputLocation.set(file("${layout.buildDirectory.get().asFile}/reports/spotbugs/spotbugs.html"))
+        }
     }
 }
