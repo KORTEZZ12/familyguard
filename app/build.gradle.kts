@@ -77,11 +77,11 @@ tasks.withType<com.github.spotbugs.snom.SpotBugsTask>().configureEach {
     reports {
         xml {
             required.set(true)
-            outputLocation.set(file("${layout.buildDirectory.get().asFile}/reports/spotbugs/spotbugs.xml"))
+            setDestination(file("${layout.buildDirectory.get().asFile}/reports/spotbugs/spotbugs.xml"))
         }
         html {
             required.set(true)
-            outputLocation.set(file("${layout.buildDirectory.get().asFile}/reports/spotbugs/spotbugs.html"))
+            setDestination(file("${layout.buildDirectory.get().asFile}/reports/spotbugs/spotbugs.html"))
         }
     }
 }
