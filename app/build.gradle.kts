@@ -54,7 +54,7 @@ detekt {
 
 pmd {
     ruleSetFiles = files("$projectDir/config/pmd-ruleset.xml")
-    isIgnoreFailures = false
+    ignoreFailures = false
 }
 
 tasks.register<Pmd>("pmd") {
@@ -63,7 +63,7 @@ tasks.register<Pmd>("pmd") {
     source = fileTree("src/main/java")
     include("**/*.java")
     ruleSetFiles = files("$projectDir/config/pmd-ruleset.xml")
-    isIgnoreFailures = false
+    ignoreFailures = false
     reports {
         xml.required.set(true)
         html.required.set(true)
