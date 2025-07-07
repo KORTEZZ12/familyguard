@@ -53,31 +53,39 @@ detekt {
 }
 
 pmd {
-    ruleSets = listOf("basic", "braces", "clone", "codesize", "design", "empty", "finalizers", "imports", "naming", "optimizations", "strictexception", "strings", "unusedcode")
     ruleSetFiles = files("$projectDir/config/pmd-ruleset.xml")
-    sourceSets = sourceSets
+    isIgnoreFailures = false
 }
 
-tasks.register<org.gradle.api.plugins.quality.Pmd>("pmd") {
+tasks.register<Pmd>("pmd") {
     group = "verification"
     description = "Run PMD analysis"
-    source("src/main/java")
+    source = fileTree("src/main/java")
     include("**/*.java")
     ruleSetFiles = files("$projectDir/config/pmd-ruleset.xml")
-    ignoreFailures = false
+    isIgnoreFailures = false
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
 }
 
 spotbugs {
     effort.set(com.github.spotbugs.snom.Effort.MAX)
     reportLevel.set(com.github.spotbugs.snom.Confidence.HIGH)
-    excludeFilter.set(file("$projectDir/spotbugs-exclude.xml"))
+    // Закомментировано до создания файла
+    // excludeFilter.set(file("$projectDir/spotbugs-exclude.xml"))
 }
 
 tasks.withType<com.github.spotbugs.snom.SpotBugsTask>().configureEach {
     reports {
-        xml.enabled = true
-        xml.destination = file("${layout.buildDirectory.get().asFile}/reports/spotbugs/spotbugs.xml")
-        html.enabled = true
-        html.destination = file("${layout.buildDirectory.get().asFile}/reports/spotbugs/spotbugs.html")
+        create("xml") {
+            required.set(true)
+            outputLocation.set(file("${layout.buildDirectory.get().asFile}/reports/spotbugs/spotbugs.xml"))
+        }
+        create("html") {
+            required.set(true)
+            outputLocation.set(file("${layout.buildDirectory.get().asFile}/reports/spotbugs/spotbugs.html"))
+        }
     }
 }

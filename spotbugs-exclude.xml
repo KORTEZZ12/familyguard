@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+    <!-- Исключаем автогенерированные файлы -->
+    <Match>
+        <Class name="~.*\.R\$.*"/>
+    </Match>
+    <Match>
+        <Class name="~.*\.Manifest\$.*"/>
+    </Match>
+    <Match>
+        <Class name="~.*\.BuildConfig"/>
+    </Match>
+    
+    <!-- Исключаем тестовые файлы -->
+    <Match>
+        <Class name="~.*Test.*"/>
+    </Match>
+    
+    <!-- Исключаем специфические баги, которые не критичны для Android -->
+    <Match>
+        <Bug pattern="SE_BAD_FIELD"/>
+    </Match>
+    
+    <!-- Исключаем предупреждения о сериализации (часто не нужны в Android) -->
+    <Match>
+        <Bug pattern="SE_NO_SERIALVERSIONID"/>
+    </Match>
+    
+    <!-- Исключаем предупреждения о внутренних классах -->
+    <Match>
+        <Bug pattern="SIC_INNER_SHOULD_BE_STATIC"/>
+    </Match>
+    
+    <!-- Можете добавить свои исключения здесь -->
+    <!-- Пример исключения конкретного класса:
+    <Match>
+        <Class name="com.example.MyClass"/>
+    </Match>
+    -->
+    
+    <!-- Пример исключения конкретного метода:
+    <Match>
+        <Class name="com.example.MyClass"/>
+        <Method name="myMethod"/>
+    </Match>
+    -->
+</FindBugsFilter>
