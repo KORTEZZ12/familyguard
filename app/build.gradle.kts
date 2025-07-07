@@ -73,8 +73,7 @@ tasks.register<Pmd>("pmd") {
 spotbugs {
     effort.set(com.github.spotbugs.snom.Effort.MAX)
     reportLevel.set(com.github.spotbugs.snom.Confidence.HIGH)
-    // Закомментировано до создания файла
-    // excludeFilter.set(file("$projectDir/spotbugs-exclude.xml"))
+    excludeFilter.set(file("$projectDir/spotbugs-exclude.xml"))
 }
 
 tasks.withType<com.github.spotbugs.snom.SpotBugsTask>().configureEach {
