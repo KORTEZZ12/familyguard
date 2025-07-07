@@ -56,15 +56,23 @@ pmd {
     ruleSetFiles = files("$projectDir/config/pmd-ruleset.xml")
 }
 
-tasks.withType<Pmd>().configureEach {
+tasks.register<Pmd>("pmd") {
     group = "verification"
     description = "Run PMD analysis"
+    source = fileTree("src/main/java")
+    include("**/*.java")
     ruleSetFiles = files("$projectDir/config/pmd-ruleset.xml")
     ignoreFailures = false
     reports {
         xml.required.set(true)
         html.required.set(true)
     }
+}
+
+spotbugs {
+    effort.set(com.github.spotbugs.snom.Effort.MAX)
+    reportLevel.set(com.github.spotbugs.snom.Confidence.HIGH)
+    excludeFilter.set(file("$projectDir/spotbugs-exclude.xml"))
 }
 
 spotbugs {

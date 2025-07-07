@@ -116,7 +116,7 @@ jobs:
         if: always()
       
       - name: Run PMD
-        run: ./gradlew :app:pmd --stacktrace --info
+        run: ./gradlew pmd --stacktrace --info
 
       - name: Upload PMD reports
         uses: actions/upload-artifact@v4
@@ -151,8 +151,8 @@ jobs:
           rm -rf ~/.gradle/caches/
           ./gradlew clean
 
-      - name: Run SpotBugs
-        run: ./gradlew :app:spotbugs --stacktrace --info
+      - name: Run SpotBugs Debug
+        run: ./gradlew spotbugsDebug --stacktrace --info
 
       - name: Upload SpotBugs reports
         uses: actions/upload-artifact@v4
