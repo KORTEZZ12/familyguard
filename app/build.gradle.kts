@@ -72,13 +72,8 @@ tasks.register<Pmd>("pmd") {
 spotbugs {
     effort.set(com.github.spotbugs.snom.Effort.MAX)
     reportLevel.set(com.github.spotbugs.snom.Confidence.HIGH)
-    excludeFilter.set(file("$projectDir/spotbugs-exclude.xml"))
-}
-
-spotbugs {
-    effort.set(com.github.spotbugs.snom.Effort.MAX)
-    reportLevel.set(com.github.spotbugs.snom.Confidence.HIGH)
-    excludeFilter.set(file("$projectDir/spotbugs-exclude.xml"))
+    // Исправлен путь к файлу - теперь ищет в корне проекта
+    excludeFilter.set(file("${rootProject.projectDir}/spotbugs-exclude.xml"))
 }
 
 tasks.withType<com.github.spotbugs.snom.SpotBugsTask>().configureEach {
