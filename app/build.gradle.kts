@@ -54,14 +54,11 @@ detekt {
 
 pmd {
     ruleSetFiles = files("$projectDir/config/pmd-ruleset.xml")
-    ignoreFailures = false
 }
 
-tasks.register<Pmd>("pmd") {
+tasks.withType<Pmd>().configureEach {
     group = "verification"
     description = "Run PMD analysis"
-    source = fileTree("src/main/java")
-    include("**/*.java")
     ruleSetFiles = files("$projectDir/config/pmd-ruleset.xml")
     ignoreFailures = false
     reports {
